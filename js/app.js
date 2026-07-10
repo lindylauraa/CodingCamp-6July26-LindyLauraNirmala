@@ -68,18 +68,30 @@ const State = (() => {
   }
 
   function getFiltered() {
-  let result = filterMonth
-    ? transactions.filter(t => t.date.slice(0, 7) === filterMonth)
-    : transactions.slice();
+    let result = transactions.slice();
+    if (filterMonth) {
+      const now = new Date();
+      const todayStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const currentMonthStr = now.toLocaleDateString('id-ID', { month: '2-digit', year: 'numeric' });
+      const currentYearStr = now.toLocaleDateString('id-ID', { year: 'numeric' });
 
-  if (sortByCategory) {
-    result = result.slice().sort((a, b) => a.name.localeCompare(b.name));
-  } else {
-    result.reverse();
+      if (filterMonth === 'today') {
+        result = result.filter(t => t.date === todayStr);
+      } else if (filterMonth === 'this-month') {
+        result = result.filter(t => t.date.slice(3) === currentMonthStr);
+      } else if (filterMonth === 'this-year') {
+        result = result.filter(t => t.date.slice(6) === currentYearStr);
+      }
+    }
+
+    if (sortByCategory) {
+      result = result.slice().sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      result.reverse();
+    }
+
+    return result;
   }
-
-  return result;
-}
 
   function getBalance() {
     const sum = transactions.reduce((acc, t) => acc + t.amount, 0);
@@ -163,7 +175,6 @@ const Renderer = (() => {
 
   function renderTransactionList(transactions) {
     const list = getList();
-    // Clear existing items
     list.innerHTML = '';
 
     if (transactions.length === 0) {
@@ -185,7 +196,7 @@ for (const t of transactions) {
 
       const dateSpan = document.createElement('span');
       dateSpan.className = 'transaction-date';
-      dateSpan.textContent = t.date; // Mengambil data tanggal transaksi
+      dateSpan.textContent = t.date; 
 
       const amountSpan = document.createElement('span');
       amountSpan.className = 'transaction-amount';
@@ -223,7 +234,7 @@ for (const t of transactions) {
     if (show) {
       const li = document.createElement('li');
       li.className = 'empty-state';
-      li.textContent = 'No transactions for this month';
+      li.textContent = 'No transactions found for this period';
       list.appendChild(li);
     }
   }
@@ -318,10 +329,16 @@ const ChartManager = (() => {
   let chart = null;
 
   const PALETTE = [
-    '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
-    '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4',
-    '#469990', '#dcbeff', '#9a6324', '#fffac8', '#800000',
-    '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9',
+    '#FCE4EC',
+    '#F8BBD0',
+    '#F48FB1', 
+    '#F06292', 
+    '#EC407A',
+    '#E91E63',
+    '#D81B60',
+    '#C2185B',
+    '#AD1457',
+    '#880E4F'
   ];
 
   const categoryColorMap = new Map();
@@ -492,7 +509,11 @@ const EventHandlers = (() => {
     }
   }
 
-  function _handleListClick(event) {
+ function _handleListClick(event) {
+    if (!event.target.classList.contains('btn-delete')) {
+      return; 
+    }
+
     const id = event.target.dataset.id;
     if (!id) return;
 
@@ -580,7 +601,7 @@ const EventHandlers = (() => {
     document.getElementById('transaction-list')
       .addEventListener('click', _handleListClick);
 
-    document.getElementById('month-filter')
+    document.getElementById('filter')
       .addEventListener('change', _handleMonthFilterChange);
 
     document.getElementById('sort-select')

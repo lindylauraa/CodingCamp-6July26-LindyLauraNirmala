@@ -9,19 +9,19 @@
 
 
 :root {
-  --color-primary:       #e755e7;
-  --color-primary-dark:  #c43ec6;   
+  --color-primary:       #e89eb8;
+  --color-primary-dark:  #fb6f92;   
   --color-primary-light: #e8f2fb;   
   --color-accent:        #d45f00;
-  --color-bg:            #f5f7fa; 
+  --color-bg:            #ffb7ce; 
   --color-surface:       #ffffff; 
-  --color-border:        #c8cdd5;  
+  --color-border:        #ffb7ce;  
   --color-text:          #1a1f27; 
   --color-text-muted:    #4a5568;
-  --color-error:         #b91c1c;
+  --color-error:         #cb1f1f;
   --color-error-bg:      #fef2f2;
   --color-error-border:  #f87171;
-  --color-focus:         #e176d1;
+  --color-focus:         #ff8fab;
 
   --font-family:  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-size-base: 1rem;  
@@ -127,7 +127,7 @@ h2 {
 .main-title {
   text-align: center;
   font-size: var(--font-size-xl);
-  color: var(--color-text);
+  color: #7d5a64;
   margin: var(--space-6) auto var(--space-2) auto;
   font-weight: 700;
   display: block;
@@ -149,6 +149,7 @@ header {
 }
 
 .balance-label {
+ font-family: 'Poppins', 'Montserrat', sans-serif;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -159,7 +160,7 @@ header {
 #balance-display {
   font-size: 3rem;       
   font-weight: 700;
-  color: #e458df; 
+  color: #f048ea; 
   white-space: nowrap;
 }
 
@@ -486,10 +487,6 @@ button[type="submit"]:focus-visible,
   .btn-delete,
   button[type="submit"] {
     display: none;
-  }
-
-  main {
-    grid-template-columns: 1fr;
   }
 
   body {
