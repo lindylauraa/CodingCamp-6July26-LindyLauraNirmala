@@ -538,16 +538,12 @@ const EventHandlers = (() => {
   }
 
  function _handleMonthFilterChange(event) {
-    // 1. Set filter berdasarkan pilihan select option (today, this-month, dll)
     State.setFilterMonth(event.target.value || null);
     
-    // 2. Ambil data transaksi yang sudah lolos filter waktu
     const filteredData = State.getFiltered();
     
-    // 3. Render list transaksi sesuai filter
     Renderer.renderTransactionList(filteredData);
     
-    // 4. Hitung dan render ulang Total Balance berdasarkan data terfilter saja
     const filteredBalance = State.getFilteredBalance(filteredData);
     Renderer.renderBalance(filteredBalance);
   }
