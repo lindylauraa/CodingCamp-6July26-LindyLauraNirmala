@@ -98,6 +98,11 @@ const State = (() => {
     return Math.round(sum * 100) / 100;
   }
 
+  function getFilteredBalance(filteredTransactions) {
+    const sum = filteredTransactions.reduce((acc, t) => acc + t.amount, 0);
+    return Math.round(sum * 100) / 100;
+  }
+
   function getCategoryTotals() {
     return transactions.reduce((map, t) => {
       if (t.amount > 0) {
@@ -120,6 +125,7 @@ const State = (() => {
     getFiltered,
     getBalance,
     getCategoryTotals,
+    getFilteredBalance,
   };
 })();
 
@@ -520,7 +526,9 @@ const EventHandlers = (() => {
     State.deleteTransaction(id);
     Storage.save(State.transactions);
     Renderer.renderTransactionList(State.getFiltered());
-    Renderer.renderBalance(State.getBalance());
+   const filteredDataAfterDelete = State.getFiltered();
+    Renderer.renderTransactionList(filteredDataAfterDelete);
+    Renderer.renderBalance(State.getFilteredBalance(filteredDataAfterDelete));
 
     if (State.getCategoryTotals().size > 0) {
       ChartManager.update(State.getCategoryTotals());
@@ -529,11 +537,20 @@ const EventHandlers = (() => {
     }
   }
 
-  function _handleMonthFilterChange(event) {
+ function _handleMonthFilterChange(event) {
+    // 1. Set filter berdasarkan pilihan select option (today, this-month, dll)
     State.setFilterMonth(event.target.value || null);
-    Renderer.renderTransactionList(State.getFiltered());
+    
+    // 2. Ambil data transaksi yang sudah lolos filter waktu
+    const filteredData = State.getFiltered();
+    
+    // 3. Render list transaksi sesuai filter
+    Renderer.renderTransactionList(filteredData);
+    
+    // 4. Hitung dan render ulang Total Balance berdasarkan data terfilter saja
+    const filteredBalance = State.getFilteredBalance(filteredData);
+    Renderer.renderBalance(filteredBalance);
   }
-
   function _handleSortSelectChange(event) {
     State.setSortByCategory(event.target.value === 'category');
     Renderer.renderTransactionList(State.getFiltered());
